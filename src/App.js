@@ -49,11 +49,12 @@ function App() {
 	}, []);
 
 	const setupSocket = () => {
-		socket.current = io('http://localhost:3080', {
+		socket.current = io('http://localhost:3001', {
 			reconnection: true,
 			reconnectionDelay: 1000,
 			reconnectionDelayMax: 5000,
 			reconnectionAttempts: Infinity,
+			cors: { origin: '*' },
 		});
 
 		socket.current.on('connect', () => {
@@ -95,8 +96,10 @@ function App() {
 	// };
 
 	const microphoneProcess = (e) => {
+		console.log(e);
 		var left = e.inputBuffer.getChannelData(0);
 		var left16 = downsampleBuffer(left, 44100, 16000);
+		console.log('>>>>>>>>>', left16);
 		socket.current.emit('binaryData', left16);
 	};
 
@@ -118,6 +121,7 @@ function App() {
 			input.connect(processor);
 
 			processor.onaudioprocess = function (e) {
+				console.log('??????ssssS', e);
 				microphoneProcess(e);
 			};
 		};
